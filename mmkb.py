@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 
-VERSION = 7  # version of the script, has to be on top of the file
+VERSION = 8  # version of the script, has to be on top of the file
 
 
 def get_key_info():
@@ -83,10 +83,12 @@ if __name__ == "__main__":
             case 2:
                 lock()
 
-    if t > 5 < 10:
+    elif t > 5 < 10:
         match k:
             case 2:
                 shutdown()
+            case _:
+                print("Skipping key press, wrong key pressed")
 
 
     else:
