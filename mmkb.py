@@ -2,41 +2,43 @@ import argparse
 import ctypes
 import os.path
 import time
+from pathlib import Path
 
 import requests
 
-VERSION = 3  # version of the script, has to be on top of the file
-UPDATE_URL = "https://raw.githubusercontent.com/KilianSen/MiniKeyboard/master/mmkb.py"
+VERSION = 5  # version of the script, has to be on top of the file
 
 
 def get_key_info():
     parser = argparse.ArgumentParser()
     parser.add_argument("keyIndex", type=int)
     parser.add_argument("pressTime", type=float)
+    parser.add_argument("updateInterval", type=int)
+    parser.add_argument("updateURL", type=str)
     args = parser.parse_args()
-    return args.keyIndex, args.pressTime
+    return args.keyIndex, args.pressTime, args.updateInterval, args.updateURL
 
 
 def get_file_from_url(url):
     return requests.get(url).text
 
 
-def update():
+def update(url: str, interval: int):
     # check value in update.lock
-    if os.path.isfile("update.lock"):
+    if os.path.isfile(f"{Path(__file__).stem}.update.lock"):
 
-        with open("update.lock", "r") as f:
+        with open(f"{Path(__file__).stem}.update.lock", "r") as f:
             last_update = int(f.read())
 
             delta = time.time() - last_update
 
-            if delta < 3600:
+            if delta < interval * 60:
                 return
 
-    with open("update.lock", "w") as f:
+    with open(f"{Path(__file__).stem}.update.lock", "w") as f:
         f.write(str(int(time.time())))
 
-    data = get_file_from_url(UPDATE_URL).split("\n")
+    data = get_file_from_url(url).split("\n")
     version_index = int([line.startswith("VERSION") for line in data].index(True).__str__().strip())
     version = int(data[version_index].split("=")[1].split("#")[0].strip())
 
@@ -64,7 +66,7 @@ def lock():
 
 
 if __name__ == "__main__":
-    k, t = get_key_info()
+    k, t, update_interval, update_url = get_key_info()
 
     if t < 1:
         match k:
@@ -77,4 +79,4 @@ if __name__ == "__main__":
     else:
         print("Skipping key press, too long press time.")
 
-    update()
+    update(update_url, update_interval)

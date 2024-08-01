@@ -36,7 +36,9 @@ type Config struct {
 		Script string `yaml:"script" env:"HANDLER_SCRIPT, default=./mmkb.py"`
 	} `yaml:"handler"`
 
-	Restart int `yaml:"restart" env:"RESTART, default=25"`
+	Restart        int    `yaml:"restart" env:"RESTART, default=25"`
+	UpdateInterval int    `yaml:"update_interval" env:"UPDATE_INTERVAL, default=60"`
+	UpdateURL      string `yaml:"update_url" env:"UPDATE_URL, default="`
 }
 
 var config Config
@@ -53,7 +55,13 @@ func (w LogWriter) Write(p []byte) (n int, err error) {
 func execHandler(keyIndex int, pressTime float64) {
 	// Execute the handler with the key index and press time as arguments
 
-	cmd := exec.Command(config.Handler.Exec, config.Handler.Script, strconv.Itoa(keyIndex), fmt.Sprintf("%f", pressTime))
+	cmd := exec.Command(
+		config.Handler.Exec,
+		config.Handler.Script,
+		strconv.Itoa(keyIndex),
+		fmt.Sprintf("%f", pressTime),
+		strconv.Itoa(config.UpdateInterval),
+		config.UpdateURL)
 	// Get stdout and stderr and use log (error) if needed
 
 	// create a custom io.Writer that logs the output with a timestamp
