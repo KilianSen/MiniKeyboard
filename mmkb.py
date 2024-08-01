@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 
-VERSION = 6  # version of the script, has to be on top of the file
+VERSION = 7  # version of the script, has to be on top of the file
 
 
 def get_key_info():
@@ -66,6 +66,10 @@ def lock():
     print("Locking Screen")
     ctypes.windll.user32.LockWorkStation()
 
+def shutdown():
+    print("Shutting down")
+    os.system("shutdown /s /t 1")
+
 
 if __name__ == "__main__":
     k, t, update_interval, update_url = get_key_info()
@@ -78,6 +82,13 @@ if __name__ == "__main__":
                 calc()
             case 2:
                 lock()
+
+    if t > 5 < 10:
+        match k:
+            case 2:
+                shutdown()
+
+
     else:
         print("Skipping key press, too long press time.")
 
