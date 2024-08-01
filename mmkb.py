@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 
-VERSION = 5  # version of the script, has to be on top of the file
+VERSION = 6  # version of the script, has to be on top of the file
 
 
 def get_key_info():
@@ -34,6 +34,8 @@ def update(url: str, interval: int):
 
             if delta < interval * 60:
                 return
+
+    print("Checking for updates")
 
     with open(f"{Path(__file__).stem}.update.lock", "w") as f:
         f.write(str(int(time.time())))
