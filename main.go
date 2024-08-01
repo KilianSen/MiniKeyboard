@@ -74,7 +74,6 @@ func onMessage(_ MQTT.Client, msg MQTT.Message) {
 		log.Printf("[mmkb] Invalid key received: %v", err)
 		return
 	}
-	println(1)
 
 	if key == -1 {
 		execHandler(lastKey, time.Since(lastTime).Seconds())
